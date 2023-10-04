@@ -43,7 +43,7 @@ module.exports = {
       const accessToken = jwt.sign(
         {
           id: user._id,
-          isAdmin: user.isAdmin,
+          isAdmin: user.isClinician,
         },
         process.env.JWT_SEC,
         { expiresIn: "7d" }
