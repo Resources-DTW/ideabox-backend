@@ -1,4 +1,12 @@
 const Whquest = require("../models/Whquest");
+const multer = require("multer");
+
+// image upload
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+});
 
 module.exports = {
   //create a new wh question

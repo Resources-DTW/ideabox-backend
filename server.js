@@ -2,6 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
+const session = require("express-session");
+const bodyparser = require("body-parser");
+const axios = require("axios");
 
 const app = express();
 const port = 3000;
@@ -16,6 +19,31 @@ mongoose
   .then(() => console.log("db connected"))
   .catch((err) => console.log(err));
 
+app.use(bodyparser.urlencoded({ extended: true }));
+
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+app.get("/wh-questions", (req, res) => {
+  res.render("wh-questions");
+});
+
+app.get("/users", (req, res) => {
+  axios
+    .get("http://localhost:3368/api/users")
+    .then(function (response) {
+      // console.log(response.data);
+      res.render("users", { users: response.data });
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
+
 //To allow localhost network
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3368");
@@ -25,6 +53,14 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+// app.use(
+//   session({
+//     secret: "my secret key",
+//     saveUninitialized: true,
+//     resave: false,
+//   })
+// );
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
