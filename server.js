@@ -2,9 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
-const session = require("express-session");
-const bodyparser = require("body-parser");
-const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
 const port = 3000;
@@ -19,34 +17,23 @@ mongoose
   .then(() => console.log("db connected"))
   .catch((err) => console.log(err));
 
-app.use(bodyparser.urlencoded({ extended: true }));
+const allowedOrigins = ["http://localhost:3000"];
 
-app.set("view engine", "ejs");
-app.use(express.static("public"));
-
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-app.get("/wh-questions", (req, res) => {
-  res.render("wh-questions");
-});
-
-app.get("/users", (req, res) => {
-  axios
-    .get("http://localhost:3368/api/users")
-    .then(function (response) {
-      // console.log(response.data);
-      res.render("users", { users: response.data });
-    })
-    .catch((err) => {
-      res.send(err);
-    });
-});
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
 
 //To allow localhost network
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3368");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
