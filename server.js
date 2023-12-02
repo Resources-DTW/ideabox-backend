@@ -2,10 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
-const cors = require("cors");
-
-const app = express();
 const port = 3000;
+const app = express();
+const cors = require("cors");
 
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
@@ -17,19 +16,8 @@ mongoose
   .then(() => console.log("db connected"))
   .catch((err) => console.log(err));
 
-const allowedOrigins = ["http://localhost:3000"];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-  })
-);
+//For Axios Network Error
+app.use(cors());
 
 //To allow localhost network
 app.use((req, res, next) => {
